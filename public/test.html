@@ -1,0 +1,36 @@
+<html>
+<head>
+<script type="text/javascript" src='https://code.jquery.com/jquery-3.5.1.min.js'></script>
+<script type='text/javascript'>
+    $(() =>
+    $('#submit').click(() => {
+        console.log(1);
+        $('#resultset').html('');
+        console.log(2);
+        $('#errmsg').hide();
+        console.log(3);
+        let $promise = $.post('/cgi-bin/test.pl', {address: $('#address').val()});
+        $promise.done(result => {
+            if (result.error) $('#errmsg').show();
+            for (let chunk of result.data) {
+                $('#resultset').append(`
+                    <div style='float:left'>${chunk.created}</div>
+                    <div>${chunk.str}</div>
+                    <div style="clear:both"></div>
+                `);
+            }
+        });
+        return false;
+    })
+    );
+</script>
+</head>
+<body>
+<label for='address'>Search address:</label>
+<input type='text' name='address' id='address' size=20 value=''>
+<input type='submit' id='submit'>
+<div id='errmsg' style='text-color: red; font-weight: bold;display: none;'>Too many rows in result set. Search limit exceeded.</div>
+<div id='resultset'>
+</div>
+</body>
+</html>
